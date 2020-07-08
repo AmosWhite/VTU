@@ -8,6 +8,10 @@ namespace Amos.VTUCORE3._1.Models.DTO
 {
     public class AmosVTU_Context : DbContext
     {
+        public AmosVTU_Context()
+        {
+
+        }
         public AmosVTU_Context(DbContextOptions<AmosVTU_Context> options)
            : base(options)
         {
