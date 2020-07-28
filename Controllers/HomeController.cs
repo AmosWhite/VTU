@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Amos.VTUCORE3._1.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Amos.VTUCORE3._1.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -21,6 +23,7 @@ namespace Amos.VTUCORE3._1.Controllers
         public IActionResult Index()
         {
             return View();
+            
         }
 
         public IActionResult Privacy()

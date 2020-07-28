@@ -1,0 +1,144 @@
+﻿@model Amos.VTUCORE3._1.Models.ViewModel.ProfileDetailsVM
+
+@{
+    ViewData["Title"] = "UserProfile";
+    var id = Model.Id;
+}
+<style>
+    input {
+        border: 0px;
+        background-color: white
+    }
+
+    .panel > .panel-heading {
+        background-image: none;
+        background-color: gainsboro;
+        color: white;
+    }
+
+    .panel > .panel-footer {
+        background-image: none;
+        background-color: gainsboro;
+        color: white;
+    }
+</style>
+
+<div>
+    @*-----the panel below displays personal details------*@
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">PROFILE:</h3>
+        </div>
+        <div class="panel-body">
+            <div class="container">
+                <div class="col-xs-12 col-md-8">
+
+                    <table class="table table-responsive table-condensed table no-border">
+
+                        <tr>
+                            <td>
+                                <b> First Name:</b>
+                            </td>
+                            <td>
+                                @Model.FirstName
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <b> Last Name:</b>
+                            </td>
+
+                            <td>
+                                @Model.LastName
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td>
+                                <b>  Username:</b>
+                            </td>
+
+                            <td>
+                                @Model.UserName
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <b> Email:</b>
+                            </td>
+
+                            <td>
+                                <b> @Model.Email</b>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td>
+                                <b> Phone Number:</b>
+                            </td>
+
+                            <td>
+                                @Model.PhoneNumber
+                            </td>
+
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        <div class="panel-footer">
+            <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#add-contact"
+                    data-url="@Url.Action("EditProfile", new {id = Model.Id })" style="width:auto">
+                Edit Profile
+            </button>
+        </div>
+    </div>
+</div>
+<form name="reloadForm" asp-action="UserProfile" asp-controller="Account">
+    <input type="hidden" value="@id" name="id" />
+    <button type="submit" style="display:none"></button>
+</form>
+<div id="modal-placeholder"></div>
+@section Scripts{
+    <script>
+        $(function () {
+            var placeholderElement = $('#modal-placeholder');
+
+            $('button[data-toggle="ajax-modal"]').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    placeholderElement.html(data);
+                    placeholderElement.find('.modal').modal('show');
+                });
+            });
+
+            placeholderElement.on('click', '[data-save="modal"]', function (event) {
+                event.preventDefault();
+
+                $("#loaderDiv").show();
+                var form = $(this).parents('.modal').find('form');
+                var actionUrl = form.attr('action');
+                var dataToSend = form.serialize();
+
+                $.post(actionUrl, dataToSend).done(function (data) {
+                    var newBody = $('.modal-body', data);
+                    placeholderElement.find('.modal-body').replaceWith(newBody);
+
+                    var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+                    $("#loaderDiv").hide();
+                    if (isValid) {
+                        placeholderElement.find('.modal').modal('hide');
+                        document.reloadForm.submit();
+                    }
+                    
+                });
+            });
+        });
+
+
+    </script>
+}
+

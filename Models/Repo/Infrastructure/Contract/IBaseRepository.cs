@@ -64,5 +64,5 @@ namespace Amos.VTUCORE3._1.Models.Repo.Infrastructure.Contract
         /// <returns></returns>
         bool Exists(Expression<Func<T, bool>> whereCondition);
 
-    }
+        }
 }

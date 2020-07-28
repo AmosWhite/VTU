@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Amos.VTUCORE3._1.Models.ViewModel.ProductVm>
+ 
+@{ 
+   ViewData["Title"] = "Products";
+}
+
+<h1 style="text-align:center">List of Products</h1>
+
+<div class="list-group">
+    @foreach (var item in Model)
+    {
+        <a asp-action="ProductDetails" asp-controller="Product"
+           class="list-group-item list-group-item-action" asp-route-id="@item.id">@item.Title</a>
+    }
+    
+</div>
+<form name="reloadForm" asp-action="ListService" asp-controller="Admin">
+    <button type="submit" style="display:none"></button>
+</form>
+<div id="modal-placeholder"></div>
+@section Scripts{
+    <script>
+        $(function () {
+            var placeholderElement = $('#modal-placeholder');
+
+            $('button[data-toggle="ajax-modal"]').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    placeholderElement.html(data);
+                    placeholderElement.find('.modal').modal('show');
+                });
+            });
+
+            placeholderElement.on('click', '[data-save="modal"]', function (event) {
+                event.preventDefault();
+
+                $("#loaderDiv").show();
+                var form = $(this).parents('.modal').find('form');
+                var actionUrl = form.attr('action');
+                var dataToSend = form.serialize();
+
+                $.post(actionUrl, dataToSend).done(function (data) {
+                    var newBody = $('.modal-body', data);
+                    placeholderElement.find('.modal-body').replaceWith(newBody);
+
+                    var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+                    $("#loaderDiv").hide();
+                    if (isValid) {
+                        placeholderElement.find('.modal').modal('hide');
+                        document.reloadForm.submit();
+                    }
+
+                });
+            });
+        });
+
+
+    </script>
+}

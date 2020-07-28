@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Amos.VTUCORE3._1.Models.Repo
 {
-    public class TransactionRepository : BaseRepository<Transaction>
+    public class TransactionRepository : BaseRepository<TransactionHistory>
     {
         public TransactionRepository(IUnitOfWork unitOfWork): base(unitOfWork)
         {

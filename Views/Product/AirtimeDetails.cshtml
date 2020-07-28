@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Amos.VTUCORE3._1.Models.ViewModel.AirtimeDetailsVM>
+
+@{
+    ViewData["Title"] = "Airtime Details";
+    var productId = 1;
+}
+
+<h1 style="text-align:center">Airtime</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th style="display:none">
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Discount)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td style="display:none">
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Discount)%
+            </td>
+            <td>
+                <button type="button" class="btn btn-primary" data-toggle="ajax-modal" data-target="#add-contact"
+                        data-url="@Url.Action("EditAirtimeDetails", new {id = item.Id })" style="width:auto">
+                    Edit
+                </button>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+<form name="reloadForm" asp-action="ProductDetails" asp-controller="Product">
+    <input type="hidden" name="id" value="@productId" />
+    <button type="submit" style="display:none"></button>
+</form>
+<div id="modal-placeholder"></div>
+@section Scripts{
+    <script>
+        $(function () {
+            var placeholderElement = $('#modal-placeholder');
+
+            $('button[data-toggle="ajax-modal"]').click(function (event) {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    placeholderElement.html(data);
+                    placeholderElement.find('.modal').modal('show');
+                });
+            });
+
+            placeholderElement.on('click', '[data-save="modal"]', function (event) {
+                event.preventDefault();
+
+                $("#loaderDiv").show();
+                var form = $(this).parents('.modal').find('form');
+                var actionUrl = form.attr('action');
+                var dataToSend = form.serialize();
+
+                $.post(actionUrl, dataToSend).done(function (data) {
+                    var newBody = $('.modal-body', data);
+                    placeholderElement.find('.modal-body').replaceWith(newBody);
+
+                    var isValid = newBody.find('[name="IsValid"]').val() == 'True';
+                    $("#loaderDiv").hide();
+                    if (isValid) {
+                        placeholderElement.find('.modal').modal('hide');
+                        document.reloadForm.submit();
+                    }
+
+                });
+            });
+        });
+
+
+    </script>
+}

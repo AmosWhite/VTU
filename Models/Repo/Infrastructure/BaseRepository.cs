@@ -88,6 +88,50 @@ namespace Amos.VTUCORE3._1.Models.Repo.Infrastructure
             return dbSet.Any(whereCondition);
         }
 
+        //--------------Exra generic methods--------------------------------
+
+        public T SingleOrDefaultOrderBy(Expression<Func<T, bool>> whereCondition, Expression<Func<T, int>> orderBy, string direction)
+        {
+            if (direction == "ASC")
+            {
+                return dbSet.Where(whereCondition).OrderBy(orderBy).FirstOrDefault();
+
+            }
+            else
+            {
+                return dbSet.Where(whereCondition).OrderByDescending(orderBy).FirstOrDefault();
+            }
+        }
+
+        public int Count(Expression<Func<T, bool>> whereCondition)
+        {
+            return dbSet.Where(whereCondition).Count();
+        }
+
+        public IEnumerable<T> GetPagedRecords(Expression<Func<T, bool>> whereCondition, Expression<Func<T, string>> orderBy, int pageNo, int pageSize)
+        {
+
+            return (dbSet.Where(whereCondition)).OrderBy(orderBy).Skip((pageNo - 1) * pageSize).Take(pageSize).AsEnumerable();
+        }
+
+        /// <summary>
+        /// Gets records without filter
+        /// </summary>
+        /// <param name="whereCondition"></param>
+        /// <param name="pageNo"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
+        public IEnumerable<T> GetPagedRecords(Expression<Func<T, string>> orderBy, int pageNo, int pageSize)
+        {
+
+            return dbSet.OrderBy(orderBy).Skip((pageNo - 1) * pageSize).Take(pageSize).AsEnumerable();
+        }
+
+        public IEnumerable<T> GetAllWithPagedRecords(Expression<Func<T, string>> orderBy, int pageNo, int pageSize)
+        {
+            return (dbSet.OrderBy(orderBy).Skip((pageNo - 1) * pageSize).Take(pageSize)).AsEnumerable();
+        }
+
     }
 }
 
